@@ -29,7 +29,9 @@ int main() {
         perror("could not open\n");
       while((ch = fgetc(fp)) != EOF)
         if (ch != '\n')
-          printf("%c, ", ch);
+          printf("%c", ch);
+      if (i < 2)
+        printf("%c", ',');
       fclose(fp);
     }
     printf("%c", '\n');
