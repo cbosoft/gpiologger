@@ -1,10 +1,10 @@
-default: mtl
+default: drl
 
 
 ## Settings
 
 COMPILER = gcc -Wall -O2
-DRL = drl.c
+CRL = crl.c
 MTL = mtl.c
 DEBUG = -DDEBUG
 OUT = gpiologger
