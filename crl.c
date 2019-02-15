@@ -28,7 +28,7 @@ void closelogs(FILE **logfs) {
   }
 }
 
-int main() {
+int main(int argc, char *argv[]) {
   struct timespec ts;
   int i;
   char ch;
@@ -40,8 +40,14 @@ int main() {
   }
 
   /* Initialise values */
-  char value[NGPIO];
-  for (i = 0; i < NGPIO; i++) value[i] = '0';
+  int value[NGPIO];
+  for (i = 0; i < NGPIO; i++) {
+    fp = fopen(gpio_path[i], "r");
+    value[i] = fgetc(fp);
+    if (fp == NULL)
+      printf("failed to open %s", gpio_path[i]);
+    fclose(fp);
+  }
 
   /* Open log files */
   FILE *logf[NGPIO];
@@ -69,12 +75,13 @@ int main() {
       // Read value and check if different
       ch = fgetc(fp);
       fclose(fp);
-      if (value[i] != ch) {
+      if (value[i] != ch && ch > 0) {
         // log time of change to file
         printf("%s modified\n", gpio_path[i]);
         timespec_get(&ts, TIME_UTC);
-        fprintf(logf[i], "%ld.%09ld\n", ts.tv_sec[i], ts.tv_nsec[i]);
+        fprintf(logf[i], "%ld.%09ld\n", ts.tv_sec, ts.tv_nsec);
         fflush(logf[i]);
+        fflush(stdout);
         value[i] = ch;
       }
     }
