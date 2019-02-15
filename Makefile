@@ -12,11 +12,11 @@ OUT = gpiologger
 
 ## Recipes
 
-drl:
-	$(COMPILER) $(DRL) -o $(OUT)
+crl:
+	$(COMPILER) $(CRL) -o $(OUT)
 
-drl-debug:
-	$(COMPILER) $(DEBUG) $(DRL) -o $(OUT)
+crl-debug:
+	$(COMPILER) $(DEBUG) $(CRL) -o $(OUT)
 
 mtl:
 	$(COMPILER) $(MTL) -o $(OUT)
