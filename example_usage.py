@@ -8,7 +8,7 @@ gpio.setmode(gpio.BCM)
 for pin in pins:
     gpio.setup(pin, gpio.IN, pull_up_down=gpio.PUD_UP)
 
-logfiles = [f'gpio_pin{}.csv' for pin in pins]
+logfiles = [f'gpio_{pin}.csv' for pin in pins]
 
 pr = sp.Popen(['./gpiologger', *logfiles])
 
