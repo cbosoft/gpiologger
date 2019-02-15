@@ -2,13 +2,13 @@
 
 Logs GPIO to file
 
-Very fast c implementation with very little error checking 
+Very fast =c= implementation with very little error checking 
 and no GPIO initialisation. Intended to be used as a sub 
 program within a slower wrapper program (i.e. a python script).
 
 * Installation
 
-  - Clone the repository to your Raspberry Pi and =cd = into it.
+  - Clone the repository to your Raspberry Pi and =cd= into it.
   - run =make= and it should build the default version of the 
     logger.
 
