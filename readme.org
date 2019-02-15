@@ -15,7 +15,7 @@ program within a slower wrapper program (i.e. a python script).
 * Example usage
   In python, set up the GPIO:
 
-  #+BEGIN_SRC python
+  #+BEGIN_SRC python :tangle example_usage.py
 import subprocess as sp
 import RPi.GPIO as gpio
 
@@ -31,8 +31,8 @@ logfiles = [f'gpio_pin{}.csv' for pin in pins]
 
   Then run the =c= logger:
 
-  #+BEGIN_SRC python
-pr = sp.Popen(['./gpiologger', logfile])
+  #+BEGIN_SRC python :tangle example_usage.py
+pr = sp.Popen(['./gpiologger', *logfiles])
   #+END_SRC
 
   The logger will continue to run until it is told to stop, 
@@ -41,7 +41,7 @@ pr = sp.Popen(['./gpiologger', logfile])
   another process and should not impact the running of your 
   script.
 
-  #+BEGIN_SRC python
+  #+BEGIN_SRC python :tangle example_usage.py
 import time
 
 for i in range(60):
@@ -51,7 +51,7 @@ for i in range(60):
   Then, once you're finished, kill the logger and cleanup 
   the GPIO.
 
-  #+BEGIN_SRC python
+  #+BEGIN_SRC python :tangle example_usage.py
 pr.kill()
 gpio.cleanup()
   #+END_SRC
