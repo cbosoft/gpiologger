@@ -9,7 +9,7 @@ MTL = mtl.c
 DEBUG = -DDEBUG
 OUT = gpiologger
 
-
+.PHONY: crl crl-debug mtl mtl-debug clean
 ## Recipes
 
 crl:
