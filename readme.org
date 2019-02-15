@@ -1,0 +1,60 @@
+#+TITLE: Readme
+
+Logs GPIO to file
+
+Very fast c implementation with very little error checking 
+and no GPIO initialisation. Intended to be used as a sub 
+program within a slower wrapper program (i.e. a python script).
+
+* Installation
+
+  - Clone the repository to your Raspberry Pi and =cd = into it.
+  - run -=make= and it should build the default version of the 
+    logger.
+
+* Example usage
+  In python, set up the GPIO:
+
+  #+BEGIN_SRC python
+import subprocess as sp
+import RPi.GPIO as gpio
+
+gpio.setmode(gpio.BCM)
+gpio.setup(16, gpio.IN, pull_up_down=gpio.PUD_UP)
+gpio.setup(20, gpio.IN, pull_up_down=gpio.PUD_UP)
+gpio.setup(21, gpio.IN, pull_up_down=gpio.PUD_UP)
+
+logfile = 'gpio_log.csv'
+  #+END_SRC
+
+  Then run the c logger:
+
+  #+BEGIN_SRC python
+pr = sp.Popen(['./gpiologger', logfile])
+  #+END_SRC
+
+  The logger will continue to run until it is told to stop, 
+  constantly appending to the log file. Do whatever you want 
+  to do while the logging is underway, it is happening in 
+  another process and should not impact the running of your 
+  script.
+
+  #+BEGIN_SRC python
+import time
+
+for i in range(60):
+    time.sleep(100)
+  #+END_SRC
+
+  Then, once you're finished, kill the logger and cleanup 
+  the GPIO.
+
+  #+BEGIN_SRC python
+pr.kill()
+gpio.cleanup()
+  #+END_SRC
+  
+* Issues
+
+  - mtime based logger (=mtl.c=) doesn't output, does the GPIO 
+    value file not adhere to modification time update rules?
