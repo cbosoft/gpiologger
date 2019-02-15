@@ -15,7 +15,7 @@ pr = sp.Popen(['./gpiologger', *logfiles])
 import time
 
 for i in range(60):
-    time.sleep(100)
+    time.sleep(1)
 
 pr.kill()
 gpio.cleanup()
