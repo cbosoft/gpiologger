@@ -74,7 +74,7 @@ int main(int argc, char *argv[]) {
     }
   }
 
-  /* Close logs */
+  /* Tidy up */
   closelogs(logf);
 
   return 0;
