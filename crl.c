@@ -21,29 +21,66 @@ unsigned long getMicrotime(void){
   return currentTime.tv_sec * (long)1e6 + currentTime.tv_usec;
 }
 
+void closelogs(FILE **logfs) {
+  int i;
+  for (i = 0; i < NGPIO; i++) {
+    fclose(logfs[i]);
+  }
+}
+
 int main() {
   struct timespec ts;
   int i;
   char ch;
   FILE *fp;
+  
+  if (argc < (NGPIO+1)) {
+    puts("expects arguments: log path for each gpio.");
+    exit(-1);
+  }
 
+  /* Initialise values */
+  char value[NGPIO];
+  for (i = 0; i < NGPIO; i++) value[i] = '0';
+
+  /* Open log files */
+  FILE *logf[NGPIO];
+  for (i = 0; i < 3; i++) {
+    printf("opening log %s\n", argv[i+1]);
+    logf[i] = fopen(argv[i+1], "w");
+    if (logf[i] == NULL) {
+      printf("failed to open logf %s\n", argv[i+1]);
+      exit(-1);
+    }
+  }
+
+  /* Main loop */
   while(TRUE) {
-    timespec_get(&ts, TIME_UTC);
-    printf("%ld.%09ld, ", ts.tv_sec, ts.tv_nsec);
-    for (i = 0; i < 3; i++) {
+
+    for (i = 0; i < NGPIO; i++) {
+      
+      // Open GPIO file for reading, exit on error
       fp = fopen(gpio_path[i], "r");
       if (fp == NULL) {
         printf("failed to open %s", gpio_path[i]);
-      	exit(-1);
+      	closelogs(logf);
       }
+
+      // Read value and check if different
       ch = fgetc(fp);
-      printf("%c", ch);
-      if (i < 2) {
-        printf("%c", ',');
-      }
       fclose(fp);
+      if (value[i] != ch) {
+        // log time of change to file
+        printf("%s modified\n", gpio_path[i]);
+        timespec_get(&ts, TIME_UTC);
+        fprintf(logf[i], "%ld.%09ld\n", ts.tv_sec[i], ts.tv_nsec[i]);
+        fflush(logf[i]);
+        value[i] = ch;
+      }
     }
-    printf("%c", '\n');
   }
+
+  /* Tidy up */
+  closelogs(logf);
   return 0;
 }
