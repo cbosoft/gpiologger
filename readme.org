@@ -9,7 +9,7 @@ program within a slower wrapper program (i.e. a python script).
 * Installation
 
   - Clone the repository to your Raspberry Pi and =cd = into it.
-  - run -=make= and it should build the default version of the 
+  - run =make= and it should build the default version of the 
     logger.
 
 * Example usage
@@ -19,15 +19,17 @@ program within a slower wrapper program (i.e. a python script).
 import subprocess as sp
 import RPi.GPIO as gpio
 
-gpio.setmode(gpio.BCM)
-gpio.setup(16, gpio.IN, pull_up_down=gpio.PUD_UP)
-gpio.setup(20, gpio.IN, pull_up_down=gpio.PUD_UP)
-gpio.setup(21, gpio.IN, pull_up_down=gpio.PUD_UP)
+pins = [16, 20, 21]
 
-logfile = 'gpio_log.csv'
+gpio.setmode(gpio.BCM)
+
+for pin in pins:
+    gpio.setup(pin, gpio.IN, pull_up_down=gpio.PUD_UP)
+
+logfiles = [f'gpio_pin{}.csv' for pin in pins]
   #+END_SRC
 
-  Then run the c logger:
+  Then run the =c= logger:
 
   #+BEGIN_SRC python
 pr = sp.Popen(['./gpiologger', logfile])
@@ -53,7 +55,10 @@ for i in range(60):
 pr.kill()
 gpio.cleanup()
   #+END_SRC
-  
+
+* Result
+
+  A CSV containing the time when the gpio value changed.
 * Issues
 
   - mtime based logger (=mtl.c=) doesn't output, does the GPIO 
