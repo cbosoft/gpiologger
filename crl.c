@@ -66,7 +66,9 @@ int main(int argc, char *argv[]) {
       fclose(fp);
       if (value[i] != ch && ch > 0) {
         // log time of change to file
-        //fprintf(stderr, "%s modified: %d |= %d\n", gpio_path[i], value[i], (int)ch);
+#ifdef VERBOSE
+        fprintf(stderr, "%s modified: %d |= %d\n", gpio_path[i], value[i], (int)ch);
+#endif
         timespec_get(&ts, TIME_UTC);
         FILE *logf = fopen(argv[i+1], "a");
         fprintf(logf, "%ld.%09ld\n", ts.tv_sec, ts.tv_nsec);
