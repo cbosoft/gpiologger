@@ -134,7 +134,15 @@ plt.show()
 
   [[file:example_output.png]]
 
-* Issues
+* Issues and Todo
 
-  - mtime based logger (=mtl.c=) doesn't output, does the GPIO 
+  - Modification time based logger (=mtl.c=) doesn't output, does the GPIO 
     value file not adhere to modification time update rules?
+
+  - Still noisy, seems to be related to the way I've got the IR LEDs
+    and transistors hooked up (hardware issue)
+
+  - No error checking, would it impact performance much to include some? 
+
+  - What about erroneous result rejection? (e.g. 21 switch must follow 20
+    which must follow 16 and so on)
