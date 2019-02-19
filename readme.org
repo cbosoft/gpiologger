@@ -2,15 +2,27 @@
 
 Logs GPIO to file
 
-Very fast =c= implementation with very little error checking 
+Very simple =c= implementation with very little error checking 
 and no GPIO initialisation. Intended to be used as a sub 
 program within a slower wrapper program (i.e. a python script).
 
 * Installation
 
+  No dependencies other than a c compiler and some basic utility 
+  header files, which should be present on a Raspberry Pi.
+
   - Clone the repository to your Raspberry Pi and =cd= into it.
+
+#+BEGIN_SRC sh
+  git clone https://github.com/cbosoft/gpiologger && cd gpiologger
+#+END_SRC
+
   - run =make= and it should build the default version of the 
     logger.
+
+#+BEGIN_SRC sh
+  make
+#+END_SRC
 
 * Example usage
   In python, set up the GPIO:
@@ -58,7 +70,68 @@ gpio.cleanup()
 
 * Result
 
-  A CSV containing the time when the gpio value changed.
+  A CSV containing the times when the gpio value changed. This can be
+  processed into a speed reading simply by taking the difference of these
+  times, and dividing by the encoder disk slot size.
+
+  #+BEGIN_SRC python :tangle results_process.py
+import numpy as np
+
+pins = [16, 20, 21]
+logfiles = [f'gpio_{pin}.csv' for pin in pins]
+
+dts = list()
+for logf in logfiles:
+    with open(logf, 'r') as fp:
+        lines = fp.readlines()
+  #+END_SRC
+
+  =lines= is now a list of strings of the contents of the logfile. So
+  we can convert to list of float (=cross_times=), and calculate the
+  difference in the times (=dts=).
+
+  #+BEGIN_SRC python :tangle results_process.py
+    cross_times = [float(line) for line in lines]
+    part_dt = np.diff(cross_times)
+  #+END_SRC
+
+  The =zip= function takes inputs and transposes them together, so 2
+  length 10 lists zipped together will become 10 length 2 lists (or
+  one 10x2 list of lists). This will allow the data to easily be
+  combined and sorted.
+
+  #+BEGIN_SRC python :tangle results_process.py
+    time_and_dt = list(zip(cross_times, part_dt))
+    dts.extend(time_and_dt)
+  #+END_SRC
+
+  We can sort the zip object (so the dts are in order, associated with
+  the time of crossing) and split back out into a =times= list and a
+  =dt= list.
+
+  #+BEGIN_SRC python :tangle results_process.py
+dts = sorted(dts)
+times, dts = zip(*dts)
+  #+END_SRC
+  
+  Calculate the speed:
+
+  #+BEGIN_SRC python :tangle results_process.py
+slot_width = np.pi/6.
+speed_rads = np.divide(slot_width, dts)
+  #+END_SRC
+
+  And finally, do whatever it is you want to do with the results.
+
+  #+BEGIN_SRC python :tangle results_process.py
+from matplotlib import pyplot as plt
+
+plt.plot(times, speed_rads)
+plt.xlabel("Time/t")
+plt.ylabel("Speed/$rads^-1$")
+plt.show()
+  #+END_SRC
+
 * Issues
 
   - mtime based logger (=mtl.c=) doesn't output, does the GPIO 
