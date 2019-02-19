@@ -132,6 +132,8 @@ plt.ylabel("Speed/$rads^-1$")
 plt.show()
   #+END_SRC
 
+  [[file:example_output.png]]
+
 * Issues
 
   - mtime based logger (=mtl.c=) doesn't output, does the GPIO 
