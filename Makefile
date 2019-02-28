@@ -1,29 +1,16 @@
 default: crl
 
-
-## Settings
-
-COMPILER = gcc -Wall -O2
+COMPILER = gcc -Wall -Wextra -pedantic -O2
 CRL = crl.c
-MTL = mtl.c
 DEBUG = -DDEBUG
 VERBOSE = -DVERBOSE
 OUT = gpiologger
 
-.PHONY: crl crl-debug mtl mtl-debug clean
-## Recipes
-
-crl:
+crl: crl.c
 	$(COMPILER) $(CRL) -o $(OUT)
 
-crl-verbose:
+crl-verbose: crl.c
 	$(COMPILER) $(VERBOSE) $(CRL) -o $(OUT)
 
-crl-debug:
+crl-debug: crl.c
 	$(COMPILER) $(DEBUG) $(CRL) -o $(OUT)
-
-mtl:
-	$(COMPILER) $(MTL) -o $(OUT)
-
-mtl-debug:
-	$(COMPILER) $(DEBUG) $(MTL) -o $(OUT)
