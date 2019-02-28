@@ -45,7 +45,7 @@ int main(int argc, char *argv[]) {
     fp = fopen(gpio_path[i], "r");
     value[i] = fgetc(fp);
     if (fp == NULL)
-      fprintf(stderr, "failed to open %s", gpio_path[i]);
+      fprintf(stderr, "failed to open %s\n", gpio_path[i]);
     fclose(fp);
   }
 
@@ -57,7 +57,7 @@ int main(int argc, char *argv[]) {
       // Open GPIO file for reading, exit on error
       fp = fopen(gpio_path[i], "r");
       if (fp == NULL) {
-        fprintf(stderr, "failed to open %s", gpio_path[i]);
+        fprintf(stderr, "failed to open %s\n", gpio_path[i]);
         exit(-1);
       }
 
