@@ -2,7 +2,7 @@ default: crl
 
 COMPILER = gcc -Wall -Wextra -pedantic -O2
 CRL = crl.c
-DEBUG = -DDEBUG
+DEBUG = -DDEBUG -DVERBOSE
 VERBOSE = -DVERBOSE
 OUT = gpiologger
 
