@@ -6,7 +6,7 @@ default: crl
 COMPILER = gcc -Wall -O2
 CRL = crl.c
 MTL = mtl.c
-DEBUG = -DDEBUG
+DEBUG = -DDEBUG -DVERBOSE
 VERBOSE = -DVERBOSE
 OUT = gpiologger
 
