@@ -43,7 +43,7 @@ int main(int argc, char *argv[]) {
   int value[NGPIO];
   for (i = 0; i < NGPIO; i++) {
     fp = fopen(gpio_path[i], "r");
-    value[i] = fgetc(fp);
+    value[i] = fp ? fgetc(fp) : 0;
     if (fp == NULL)
       fprintf(stderr, "failed to open %s", gpio_path[i]);
     fclose(fp);
@@ -71,6 +71,10 @@ int main(int argc, char *argv[]) {
 #endif
         timespec_get(&ts, TIME_UTC);
         FILE *logf = fopen(argv[i+1], "a");
+        if (logf == NULL) {
+          fprintf(stderr, "!! Could not open logfile '%s'! Exiting...", argv[i+1]);
+          exit(-1);
+        }
         fprintf(logf, "%ld.%09ld\n", ts.tv_sec, ts.tv_nsec);
         fflush(logf);
         fclose(logf);
