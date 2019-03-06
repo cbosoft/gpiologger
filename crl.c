@@ -8,6 +8,7 @@
 
 #include <stdio.h>
 #include <stdlib.h>
+#include <errno.h>
 #include <sys/time.h>
 #include <time.h>
 
@@ -72,7 +73,7 @@ int main(int argc, char *argv[]) {
         timespec_get(&ts, TIME_UTC);
         FILE *logf = fopen(argv[i+1], "a");
         if (logf == NULL) {
-          fprintf(stderr, "!! Could not open logfile '%s'! Exiting...", argv[i+1]);
+          fprintf(stderr, "!! Could not open logfile '%s':\n!! Error %d: %s\n!! Exiting...", argv[i+1], errno, strerror(errno));
           exit(-1);
         }
         fprintf(logf, "%ld.%09ld\n", ts.tv_sec, ts.tv_nsec);
