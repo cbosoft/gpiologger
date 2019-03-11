@@ -10,6 +10,7 @@
 #include <stdlib.h>
 #include <errno.h>
 #include <string.h>
+#include <unistd.h>
 #include <sys/time.h>
 #include <time.h>
 
@@ -51,22 +52,34 @@ int main(int argc, char *argv[]) {
     fclose(fp);
   }
 
+  {
+    FILE *fp = fopen("gpiologger_lock", "w");
+    fprintf(fp, "%s", "delete to stop logging\n");
+    fflush(fp);
+    fclose(fp);
+  }
+
   /* Main loop */
   while(TRUE) {
-
+    if (access("gpiologger_lock", F_OK) == -1) {
+      fprintf(stderr, "%s\n", " GPIO logger finished.");
+      return 0;
+    }
     for (i = 0; i < NGPIO; i++) {
       
       // Open GPIO file for reading, exit on error
       fp = fopen(gpio_path[i], "r");
       if (fp == NULL) {
+        if (access("gpiologger_lock", F_OK) == -1)
+          return 0;
         fprintf(stderr, "failed to open %s\n", gpio_path[i]);
-        exit(-1);
+        return -1;
       }
 
       // Read value and check if different
       ch = fgetc(fp);
       fclose(fp);
-      if (value[i] != ch && ch > 0) {
+      if (value[i] != ch && (ch == 48 || ch == 49)) {
         // log time of change to file
 #ifdef VERBOSE
         fprintf(stderr, "%s modified: %d |= %d\n", gpio_path[i], value[i], (int)ch);
@@ -75,7 +88,7 @@ int main(int argc, char *argv[]) {
         FILE *logf = fopen(argv[i+1], "a");
         if (logf == NULL) {
           fprintf(stderr, "!! Could not open logfile '%s':\n!! Error %d: %s\n!! Exiting...", argv[i+1], errno, strerror(errno));
-          exit(-1);
+          return -1;
         }
         fprintf(logf, "%ld.%09ld\n", ts.tv_sec, ts.tv_nsec);
         fflush(logf);
